@@ -53,7 +53,6 @@ const getBooks = () => {
         return { status: "error", message: "เกิดข้อผิดพลาด" };
     }
 };
-
 // ทดสอบฟังก์ชัน getBooks
 console.log(getBooks());
 export{getBooks}
@@ -68,6 +67,9 @@ const getBook  = (id : number) =>{
         const book = query.get({
             $id : id,
         })
+        if (!book) {
+            return { status: "error", message: "ไม่พบข้อมูล" };
+        }
 
         return {status : "success" , data : book};
     } catch (error) {
@@ -84,30 +86,37 @@ export{getBook}
 
 const updateBook = (book: any , id: number) => {
     try {
-      const checkBook = getBook(book.id);
+      const checkBook = getBook(id);
   
       if (checkBook.status === "error") {
         return checkBook;
       }
       // สร้าง query update book
       const query = db.query(
-        "update books set title = $title, author = $author, price = $price, image = $image where id = $id"
-      );
+        "UPDATE books SET title = $title, author = $author, price = $price, image = $image WHERE id = $id"
+    );
       // run query
       query.run({
         $title: book.title,
         $author: book.author,
         $price: book.price,
         $image: book.image,
-        $id: book.id,
-      });
+        $id: id,
+    });
   
-      return { status: "success", mesage: `อัพเดท ${book.title} สําเร็จ` };
+      return { status: "success", message: `อัพเดท ${book.title} สําเร็จ` };
     } catch (error) {
       console.log(error);
-      return { status: "error", mesage: "เกิดข้อผิดพลาด" };
+      return { status: "error", message: "เกิดข้อผิดพลาด" };
     }
   };
+  const result = updateBook({
+    title: "หนังสือใหม่",
+    author: "ผู้เขียนใหม่",
+    price: 500,
+    image: "https://example.com/newimage.jpg",
+}, 7);
+console.log(result);
 export{updateBook}
 
 // dalete
@@ -173,11 +182,11 @@ const login = (user : any) =>{
             throw new Error ("รหัสผ่านไม่ถูกต้องหรือม่พบผู้ใช้งาน")
         }
 
-        return {status : "success ", data : users};
+        return {status : "success ", data : users , message : "เข้าสู่ระบบสำเสร็จ"};
     } catch (error) {
 
     console.log(error);
-    return { status : "erro" , mesage : error.mesage}
+    return { status : "erro" , message : error.message}
     }
 }
 console.log(

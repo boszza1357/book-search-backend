@@ -23,7 +23,7 @@ const app = new Elysia()
 .post("/book/save",({body})=>{
   return createBook(body)
 })
-.put("/books/:id", ({ params, body }) => {
+.put("/book/:id", ({ params, body }) => {
   return updateBook(body, parseInt(params.id));
 })
 .delete("/book/delete/:id",({params})=>{
